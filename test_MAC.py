@@ -56,5 +56,19 @@ class testMAC(unittest.TestCase):
         self.assertEqual(mac.in_dot_separated_format(True), '18C0.4D87.748F')
         self.assertEqual(mac.in_dot_separated_format(), '18c0.4d87.748f')
 
+    def test___eq__(self):
+        mac1 = MACAddress('18-C0-4D-87-74-8F')
+        mac2 = MACAddress('18:C0:4D:87:74:8F')
+        self.assertEqual(mac1 == mac2, True)
+        mac1 = MACAddress('18-C0-4D-87-74-8F')
+        mac2 = '18:C0:4D:87:74:8F'
+        self.assertEqual(mac1 == mac2, True)
+        mac1 = '18-C0-4D-87-74-8Fd'
+        mac2 = MACAddress('18:C0:4D:87:74:8F')
+        self.assertEqual(mac1 == mac2, False)
+        mac1 = '0025.96FF.fe1a'
+        mac2 = MACAddress('18:C0:4D:87:74:8F')
+        self.assertEqual(mac1 == mac2, False)
+
 if __name__ == '__main__':
     unittest.main(verbosity=3)

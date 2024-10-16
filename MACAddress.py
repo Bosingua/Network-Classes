@@ -2,11 +2,10 @@ import re
 
 class MACAddress:
 
-    _formati_mac = {'Colon-separated'   : {'separator' : ":",   'pattern' : re.compile(r'([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})')},
-                    'Hyphen-separated'  : {'separator' : "-",   'pattern' : re.compile(r'([0-9A-Fa-f]{2}[-]){5}([0-9A-Fa-f]{2})')},
-                    'Dot-separated'     : {'separator' : ".",   'pattern' : re.compile(r'([0-9A-Fa-f]{4}[.]){2}([0-9A-Fa-f]{4})')},
-                    'Hexadecimal string': {'separator' : False, 'pattern' : re.compile(r'([0-9A-Fa-f]{12})')}
-                    }
+    _formati_mac = {'Colon-separated'    : {'separator' : ":",   'pattern' : re.compile(r'([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})')},
+                    'Hyphen-separated'   : {'separator' : "-",   'pattern' : re.compile(r'([0-9A-Fa-f]{2}[-]){5}([0-9A-Fa-f]{2})')},
+                    'Dot-separated'      : {'separator' : ".",   'pattern' : re.compile(r'([0-9A-Fa-f]{4}[.]){2}([0-9A-Fa-f]{4})')},
+                    'Hexadecimal string' : {'separator' : False, 'pattern' : re.compile(r'([0-9A-Fa-f]{12})')}}
 
     @staticmethod
     def is_valid(mac_address : str) -> bool:

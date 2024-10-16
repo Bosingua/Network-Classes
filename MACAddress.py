@@ -2,46 +2,37 @@ import re
 
 class MACAddress:
 
-    def __init__(self, macAddress : str):
-        if not self.is_valid(macAddress):
-            raise ValueError('Invalid MAC address')
-        
-        if MACAddress._formato == 'Colon-separated':
-            self._macAddress = macAddress.replace(":", "").lower()
-        elif MACAddress._formato == 'Hyphen-separated':
-            self._macAddress = macAddress.replace("-", "").lower()
-        elif MACAddress._formato == 'Dot-separated':
-            self._macAddress = macAddress.replace(".", "").lower()
-        elif MACAddress._formato == 'Hexadecimal string':
-            self._macAddress = macAddress.lower()
+    _formati_mac = {'Colon-separated'   : {'separator' : ":",   'pattern' : re.compile(r'([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})')},
+                    'Hyphen-separated'  : {'separator' : "-",   'pattern' : re.compile(r'([0-9A-Fa-f]{2}[-]){5}([0-9A-Fa-f]{2})')},
+                    'Dot-separated'     : {'separator' : ".",   'pattern' : re.compile(r'([0-9A-Fa-f]{4}[.]){2}([0-9A-Fa-f]{4})')},
+                    'Hexadecimal string': {'separator' : False, 'pattern' : re.compile(r'([0-9A-Fa-f]{12})')}
+                    }
 
     @staticmethod
     def is_valid(mac_address : str) -> bool:
-        colon_separated_patten  = re.compile(r'([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})')
-        hyphen_separated_patten = re.compile(r'([0-9A-Fa-f]{2}[-]){5}([0-9A-Fa-f]{2})')
-        dot_separated_patten    = re.compile(r'([0-9A-Fa-f]{4}[.]){2}([0-9A-Fa-f]{4})')
-        hexadecimal_patten      = re.compile(r'([0-9A-Fa-f]{12})')
+        for format_name, pattern in MACAddress._formati_mac.items():
+            pattern = pattern['pattern']
+            if re.fullmatch(pattern, mac_address):
+                MACAddress._formato = format_name
+                return True
+        return False
 
-        if re.fullmatch(colon_separated_patten, mac_address):
-            MACAddress._formato = 'Colon-separated'
-            return True
-        elif re.fullmatch(hyphen_separated_patten, mac_address):
-            MACAddress._formato = 'Hyphen-separated'
-            return True
-        elif re.fullmatch(dot_separated_patten, mac_address):
-            MACAddress._formato = 'Dot-separated'
-            return True
-        elif re.fullmatch(hexadecimal_patten, mac_address):
-            MACAddress._formato = 'Hexadecimal string'
-            return True
-        else:
-            return False
+    def __init__(self, macAddress : str):
+        if not self.is_valid(macAddress):
+            raise ValueError('Invalid MAC address')
 
-    def in_Colon_separated_format(self) -> str:
-        return ':'.join([self._macAddress[i:i+2].upper() for i in range(0, 12, 2)])
+        separator = MACAddress._formati_mac[MACAddress._formato]['separator']
+        self._macAddress = macAddress.replace(separator, "").lower() if separator else macAddress.lower()
 
-    def in_Hyphen_separated_format(self) -> str:
-        return '-'.join([self._macAddress[i:i+2].upper() for i in range(0, 12, 2)])
+    def _format_mac_address(self, separator : str, upcase : bool, len : int = 2) -> str:
+        macAddress = self._macAddress.upper() if upcase else self._macAddress
+        return separator.join([macAddress[i:i+len] for i in range(0, 12, len)])
 
-    def in_dot_separated_format(self) -> str:
-        return '.'.join([self._macAddress[i:i+4] for i in range(0, 12, 4)])
+    def in_Colon_separated_format(self, upcase : bool = True) -> str:
+        return self._format_mac_address(":", upcase)
+
+    def in_Hyphen_separated_format(self, upcase : bool = True) -> str:
+        return self._format_mac_address("-", upcase)
+
+    def in_dot_separated_format(self, upcase : bool = False) -> str:
+        return self._format_mac_address(".", upcase, 4)

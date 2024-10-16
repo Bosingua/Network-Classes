@@ -36,3 +36,11 @@ class MACAddress:
 
     def in_dot_separated_format(self, upcase : bool = False) -> str:
         return self._format_mac_address(".", upcase, 4)
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, MACAddress):
+            try:
+                other = MACAddress(other)
+            except:
+                return False
+        return self._macAddress == other._macAddress

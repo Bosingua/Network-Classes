@@ -17,16 +17,21 @@ class MACAddress:
 
     @staticmethod
     def is_valid(mac_address : str) -> bool:
-        if re.fullmatch(re.compile(r'([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})'), mac_address):
+        colon_separated_patten  = re.compile(r'([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})')
+        hyphen_separated_patten = re.compile(r'([0-9A-Fa-f]{2}[-]){5}([0-9A-Fa-f]{2})')
+        dot_separated_patten    = re.compile(r'([0-9A-Fa-f]{4}[.]){2}([0-9A-Fa-f]{4})')
+        hexadecimal_patten      = re.compile(r'([0-9A-Fa-f]{12})')
+
+        if re.fullmatch(colon_separated_patten, mac_address):
             MACAddress._formato = 'Colon-separated'
             return True
-        elif re.fullmatch(re.compile(r'([0-9A-Fa-f]{2}[-]){5}([0-9A-Fa-f]{2})'), mac_address):
+        elif re.fullmatch(hyphen_separated_patten, mac_address):
             MACAddress._formato = 'Hyphen-separated'
             return True
-        elif re.fullmatch(re.compile(r'([0-9A-Fa-f]{4}[.]){2}([0-9A-Fa-f]{4})'), mac_address):
+        elif re.fullmatch(dot_separated_patten, mac_address):
             MACAddress._formato = 'Dot-separated'
             return True
-        elif re.fullmatch(re.compile(r'([0-9A-Fa-f]{12})'), mac_address):
+        elif re.fullmatch(hexadecimal_patten, mac_address):
             MACAddress._formato = 'Hexadecimal string'
             return True
         else:

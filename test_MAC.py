@@ -40,5 +40,21 @@ class testMAC(unittest.TestCase):
     def test___init___Valid_Hexadecimal_string(self):
         mac = MACAddress('18c04d877491')
         self.assertEqual(mac._macAddress, '18c04d877491')
+
+    def test_in_Colon_separated_format(self):
+        mac = MACAddress('18-C0-4D-87-74-8F')
+        self.assertEqual(mac.in_Colon_separated_format(), '18:C0:4D:87:74:8F')
+        self.assertEqual(mac.in_Colon_separated_format(False), '18:c0:4d:87:74:8f')
+
+    def test_in_Hyphen_separated_format(self):
+        mac = MACAddress('18:C0:4D:87:74:8F')
+        self.assertEqual(mac.in_Hyphen_separated_format(), '18-C0-4D-87-74-8F')
+        self.assertEqual(mac.in_Hyphen_separated_format(False), '18-c0-4d-87-74-8f')
+
+    def test_in_dot_separated_format(self):
+        mac = MACAddress('18:C0:4D:87:74:8F')
+        self.assertEqual(mac.in_dot_separated_format(True), '18C0.4D87.748F')
+        self.assertEqual(mac.in_dot_separated_format(), '18c0.4d87.748f')
+
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=3)

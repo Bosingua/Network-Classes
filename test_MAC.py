@@ -22,13 +22,13 @@ class testMAC(unittest.TestCase):
         self.assertEqual(MACAddress.is_valid([3253456,'R']), False)
         self.assertEqual(MACAddress.is_valid(([3253456,'R'], 4, 'dede')), False)
 
-    def test___init__(self):
+    def test___new__(self):
         self.assertEqual(MACAddress('18:C0:4D:87:74:91')._macAddress, '18c04d877491')
         self.assertEqual(MACAddress('18-C0-4D-87-74-91')._macAddress, '18c04d877491')
-        self.assertEqual(MACAddress('18c0.4d87.7491')._macAddress,    '18c04d877491')
-        self.assertEqual(MACAddress('18c04d877491')._macAddress,      '18c04d877491')
+        self.assertEqual(   MACAddress('18c0.4d87.7491')._macAddress, '18c04d877491')
+        self.assertEqual(     MACAddress('002596FFfe1a')._macAddress, '002596fffe1a')
         with self.assertRaises(ValueError) as error:
-            MACAddress(' 00:25:96:FF:fe:1a:34:56')
+            MACAddress('Not a valid string for MAC address')
         self.assertEqual(str(error.exception), 'Invalid MAC address')
 
     def test_in_Colon_separated_format(self):
@@ -48,6 +48,7 @@ class testMAC(unittest.TestCase):
         self.assertEqual(MACAddress('18-C0-4D-87-74-8F') == '18:C0:4D:87:74:8F',             True)
         self.assertEqual('18-C0-4D-87-74-8Fd'            == MACAddress('18:C0:4D:87:74:8F'), False)
         self.assertEqual('0025.96FF.fe1a'                == MACAddress('18:C0:4D:87:74:8F'), False)
+        self.assertEqual(1111111111111111                == MACAddress('18:C0:4D:87:74:8F'), False)
 
 if __name__ == '__main__':
     unittest.main(verbosity=3)

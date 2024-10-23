@@ -17,12 +17,15 @@ class MACAddress:
                     return True
         return False
 
-    def __init__(self, macAddress : str):
-        if not self.is_valid(macAddress):
-            raise ValueError('Invalid MAC address')
-
+    def mac_in_memory(macAddress : str) -> str:
         separator = MACAddress._formati_mac[MACAddress._formato]['separator']
-        self._macAddress = macAddress.replace(separator, "").lower() if separator else macAddress.lower()
+        return macAddress.replace(separator, "").lower() if separator else macAddress.lower()
+
+    def __new__(cls, macAddress : str):
+        if not cls.is_valid(macAddress):
+            raise ValueError('Invalid MAC address')
+        cls._macAddress = MACAddress.mac_in_memory(macAddress)
+        return super(MACAddress, cls).__new__(cls)
 
     def _format_mac_address(self, separator : str, upcase : bool, len : int = 2) -> str:
         macAddress = self._macAddress.upper() if upcase else self._macAddress
@@ -39,8 +42,5 @@ class MACAddress:
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, MACAddress):
-            try:
-                other = MACAddress(other)
-            except:
-                return False
+            return self._macAddress == MACAddress.mac_in_memory(other) if MACAddress.is_valid(other) else False
         return self._macAddress == other._macAddress

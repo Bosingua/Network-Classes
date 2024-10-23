@@ -18,6 +18,9 @@ class testMAC(unittest.TestCase):
         self.assertEqual(MACAddress.is_valid('00:25:96'), False)
         self.assertEqual(MACAddress.is_valid('00:25:96:FF'), False)
         self.assertEqual(MACAddress.is_valid('00:25:96:FF:fe'), False)
+        self.assertEqual(MACAddress.is_valid(3253456), False)
+        self.assertEqual(MACAddress.is_valid([3253456,'R']), False)
+        self.assertEqual(MACAddress.is_valid(([3253456,'R'], 4, 'dede')), False)
 
     def test___init__(self):
         self.assertEqual(MACAddress('18:C0:4D:87:74:91')._macAddress, '18c04d877491')

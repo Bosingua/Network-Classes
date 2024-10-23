@@ -8,12 +8,13 @@ class MACAddress:
                     'Hexadecimal string' : {'separator' : False, 'pattern' : re.compile(r'[0-9A-Fa-f]{12}')}}
 
     @staticmethod
-    def is_valid(mac_address : str) -> bool:
-        for format_name, pattern in MACAddress._formati_mac.items():
-            pattern = pattern['pattern']
-            if re.fullmatch(pattern, mac_address):
-                MACAddress._formato = format_name
-                return True
+    def is_valid(mac_address) -> bool:
+        if isinstance(mac_address, str):
+            for format_name, pattern in MACAddress._formati_mac.items():
+                pattern = pattern['pattern']
+                if re.fullmatch(pattern, mac_address):
+                    MACAddress._formato = format_name
+                    return True
         return False
 
     def __init__(self, macAddress : str):

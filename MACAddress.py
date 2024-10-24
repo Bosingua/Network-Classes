@@ -1,40 +1,33 @@
 from re import compile, fullmatch
-from dataclasses import dataclass
 
-@dataclass(frozen=True)
 class MACAddress:
-    _original_input : str
 
-    _formati_mac = {'Colon-separated'    : {'separator' : ":",   'pattern' : compile(r'[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}')},
-                    'Hyphen-separated'   : {'separator' : "-",   'pattern' : compile(r'[0-9A-Fa-f]{2}(-[0-9A-Fa-f]{2}){5}')},
-                    'Dot-separated'      : {'separator' : ".",   'pattern' : compile(r'[0-9A-Fa-f]{4}(.[0-9A-Fa-f]{4}){2}')},
-                    'Hexadecimal string' : {'separator' : False, 'pattern' : compile(r'[0-9A-Fa-f]{12}')}}
+    _formati_mac = {'Colon-separated'    : {'separator' : ":", 'pattern' : compile(r'[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}')},
+                    'Hyphen-separated'   : {'separator' : "-", 'pattern' : compile(r'[0-9A-Fa-f]{2}(-[0-9A-Fa-f]{2}){5}')},
+                    'Dot-separated'      : {'separator' : ".", 'pattern' : compile(r'[0-9A-Fa-f]{4}(.[0-9A-Fa-f]{4}){2}')},
+                    'Hexadecimal string' : {'separator':False, 'pattern' : compile(r'[0-9A-Fa-f]{12}')}}
 
-    def check_format(mac_address: str) -> str:
-        for format_name, pattern in MACAddress._formati_mac.items():
+    def _check_format(self, mac_address: str) -> str:
+        for format_name, pattern in self._formati_mac.items():
             if fullmatch(pattern['pattern'], mac_address):
                 return format_name
         return 'None'
-                
-    @staticmethod
-    def is_valid(mac_address) -> bool:
-        if isinstance(mac_address, str):
-            MACAddress._format = MACAddress.check_format(mac_address)
-            return False if MACAddress._format == 'None' else True
-        return False
 
-    def mac_in_memory(macAddress : str) -> str:
-        separator = MACAddress._formati_mac[MACAddress._format]['separator']
-        return macAddress.replace(separator, "").lower() if separator else macAddress.lower()
+    def _is_valid(self, input) -> bool:
+        return (False if self._check_format(input) == 'None' else True) if isinstance(input, str) else False
 
-    def __post_init__(self):
-        if not self.is_valid(self._original_input):
+    def _mac_in_memory(self, mac : str) -> str:
+        separator = self._formati_mac[self._check_format(mac)]['separator']
+        return mac.replace(separator, "").lower() if separator else mac.lower()
+
+    def __init__(self, input : str):
+        if not self._is_valid(input):
             raise ValueError('Invalid MAC address')
-        MACAddress._mac_address = MACAddress.mac_in_memory(self._original_input)
+        self._mac_address = self._mac_in_memory(input)
 
     def _format_mac_address(self, separator : str, upcase : bool, len : int = 2) -> str:
-        macAddress = self._mac_address.upper() if upcase else self._mac_address
-        return separator.join([macAddress[i:i+len] for i in range(0, 12, len)])
+        mac = self._mac_address.upper() if upcase else self._mac_address
+        return separator.join([mac[i:i+len] for i in range(0, 12, len)])
 
     def in_Colon_separated_format(self, upcase : bool = True) -> str:
         return self._format_mac_address(":", upcase)
@@ -47,5 +40,5 @@ class MACAddress:
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, MACAddress):
-            return self._mac_address == MACAddress.mac_in_memory(other) if MACAddress.is_valid(other) else False
+            return self._mac_address == self._mac_in_memory(other) if self._is_valid(other) else False
         return self._mac_address == other._mac_address

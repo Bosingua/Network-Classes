@@ -21,9 +21,14 @@ class MACAddress:
         return mac.replace(separator, "").lower() if separator else mac.lower()
 
     def __init__(self, input : str):
-        if not self._is_valid(input):
+        self._mac_address = input
+
+    def __setattr__(self, name, value):
+        if hasattr(self, '_mac_address'):
+            raise ValueError(f"cannot assign to field '{name}'")
+        if not self._is_valid(value):
             raise ValueError('Invalid MAC address')
-        self._mac_address = self._mac_in_memory(input)
+        super().__setattr__(name, self._mac_in_memory(value))
 
     def _format_mac_address(self, separator : str, upcase : bool, len : int = 2) -> str:
         mac = self._mac_address.upper() if upcase else self._mac_address

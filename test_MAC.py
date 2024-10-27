@@ -1,14 +1,9 @@
 import unittest
 from MACAddress import MACAddress
-# from dataclasses import FrozenInstanceError
 
 class testMAC(unittest.TestCase):
 
     def test___init__(self):
-        # mac1 = MACAddress('18:C0:4D:87:74:91')
-        # mac2 = MACAddress('00-25-96-FF-fe-1a') # È cruciale che siano prima creati e poi controllati!!
-        # self.assertEqual(mac1._format, 'Colon-separated')
-        # self.assertEqual(mac2._format, 'Hyphen-separated')
         self.assertEqual(MACAddress('18:C0:4D:87:74:91')._mac_address, '18c04d877491')
         self.assertEqual(MACAddress('18-C0-4D-87-74-91')._mac_address, '18c04d877491')
         self.assertEqual(   MACAddress('18c0.4d87.7491')._mac_address, '18c04d877491')
@@ -40,11 +35,14 @@ class testMAC(unittest.TestCase):
         self.assertEqual('0025.96FF.fe1a'                == MACAddress('18:C0:4D:87:74:8F'), False)
         self.assertEqual(1111111111111111                == MACAddress('18:C0:4D:87:74:8F'), False)
 
-    # def test_immutable(self):
-    #     mac = MACAddress('18-C0-4D-87-74-8F')
-    #     with self.assertRaises(FrozenInstanceError) as error:
-    #         mac._mac_address = '='
-    #     # self.assertEqual(str(error.exception), "cannot assign to field '_mac_address'")
+    def test_immutable(self):
+        mac = MACAddress('18-C0-4D-87-74-8F')
+        with self.assertRaises(ValueError) as error:
+            mac._mac_address = '='
+        self.assertEqual(str(error.exception), "cannot assign to field '_mac_address'")
+        with self.assertRaises(ValueError) as error:
+            mac._mac_address = '0025.96FF.fe1a'
+        self.assertEqual(str(error.exception), "cannot assign to field '_mac_address'")
 
 if __name__ == '__main__':
     unittest.main(verbosity=3)

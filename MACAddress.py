@@ -1,11 +1,14 @@
-from re import compile, fullmatch
+from re import fullmatch
 from random import randint
 
 class MACAddress:
 
     def _is_valid(self, input) -> bool:
         if not isinstance(input, str): return False
-        return fullmatch(compile(r'[\dA-Fa-f]{12}'), input.translate(str.maketrans('', '', ':-.')).lower())
+        input = input.lower()
+        pattern = r'[\da-f]{12}|[\da-f]{2}([:-][\da-f]{2}){5}|[\da-f]{4}\.[\da-f]{4}\.[\da-f]{4}'
+        if not fullmatch(pattern, input): return False
+        return fullmatch(r'[\da-f]{12}', input.translate(str.maketrans('', '', ':-.')))
 
     def _mac_in_memory(self, mac : str) -> str: return mac.translate(str.maketrans('', '', ':-.')).lower()
 
@@ -28,7 +31,7 @@ class MACAddress:
 
     def __add__(self): raise ValueError
 
-    __radd__ = __sub__ =__truediv__ = __div__ = __add__
+    __radd__ = __sub__ =__truediv__ = __div__ = __mod__ = __pow__ = __add__
 
     def __eq__(self, other) -> bool:
         if isinstance(other, MACAddress): return self._mac_address == other._mac_address
@@ -41,5 +44,5 @@ class MACAddress:
     @staticmethod
     def random_generator(input = ''):
         input = input.translate(str.maketrans('', '', ':-.')).lower()
-        if len(input) > 13 and not fullmatch(compile(r'[\dA-Fa-f]?'), input): raise ValueError
-        return MACAddress(input + ''.join([format(randint(0,15), 'x') for _ in range(12 - len(input))]))
+        if len(input) > 13 and not fullmatch(r'[\da-f]?', input): raise ValueError
+        return MACAddress(f'{input}{''.join([format(randint(0,15), 'x') for _ in range(12 - len(input))])}')

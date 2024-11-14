@@ -8,12 +8,11 @@ class testMAC(unittest.TestCase):
         self.assertEqual(MACAddress('18-C0-4D-87-74-91')._mac_address, '18c04d877491')
         self.assertEqual(   MACAddress('18c0.4d87.7491')._mac_address, '18c04d877491')
         self.assertEqual(     MACAddress('002596FFfe1a')._mac_address, '002596fffe1a')
-        test_input = [' 00:25:96:FF:fe:1a:34:56', '00:25:96:FF:fe:1a:34:56 ', '00:2u:96:FF:FE:12:34:56',
-        '00:25:96e:FF:FE:12:34:56', '00:25:96:F:FE:12:34:56', '00:25:96:FF:FE:12:34:56:00:25:96:FF:FE:112',
-        '00', '00:25', '00:25:96', '00:25:96:FF', '00:25:96:FF:fe', 2, [6,'R'], ([51,'R'], 4, 'dede')]
+        test_input = [' 00:25:96:FF:fe:1a', '96:FF:fe:1a:34:56 ', '00:2u:96:FF:FE:12', '00:25:96e:FF:FE:12',
+        '00:25:96:F:FE:12', '00:25:96:FF:FE:112', '00', '00:25', '00:25:96', '00:25:96:FF', '00:25:96:FF:fe',
+        2, [6,'R'], ([51,'R'], 4, 'dede'),'002:5:96:FF:fe:1a']
         for input in test_input:
-            with self.assertRaises(ValueError) as error:
-                MACAddress(input)
+            with self.assertRaises(ValueError) as error: MACAddress(input)
             self.assertEqual(str(error.exception), 'Invalid MAC address')
 
     def test_in_Colon_separated_format(self):
@@ -37,12 +36,12 @@ class testMAC(unittest.TestCase):
 
     def test_immutable(self):
         mac = MACAddress('18-C0-4D-87-74-8F')
-        with self.assertRaises(ValueError) as error:
-            mac._mac_address = '='
+        with self.assertRaises(ValueError) as error: mac._mac_address = '='
         self.assertEqual(str(error.exception), "cannot assign to field '_mac_address'")
-        with self.assertRaises(ValueError) as error:
-            mac._mac_address = '0025.96FF.fe1a'
+        with self.assertRaises(ValueError) as error: mac._mac_address = '0025.96FF.fe1a'
         self.assertEqual(str(error.exception), "cannot assign to field '_mac_address'")
+        with self.assertRaises(ValueError) as error: mac._qualche_attributo_ = '0025.96FF.fe1a'
+        self.assertEqual(str(error.exception), "cannot assign to field '_qualche_attributo_'")
 
 if __name__ == '__main__':
-    unittest.main(verbosity=3)
+    unittest.main(verbosity=1)

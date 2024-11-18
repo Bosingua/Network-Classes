@@ -17,6 +17,8 @@ class MACAddress:
         if not self._is_valid(value): raise ValueError('Invalid MAC address')
         if isinstance(value, str): super().__setattr__(name, value.translate(str.maketrans('','',':-.')).lower())
 
+    def __delattr__(self, name): raise ValueError(f"cannot assign to field '{name}'")
+
     def _format_mac_address(self, separator: str, upcase: bool, len: int = 2) -> str:
         mac = self._mac_address.upper() if upcase else self._mac_address
         return separator.join([mac[i:i+len] for i in range(0, 12, len)])

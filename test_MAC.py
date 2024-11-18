@@ -59,6 +59,8 @@ class testMAC(unittest.TestCase):
         self.assertEqual(str(error.exception), "cannot assign to field '_mac_address'")
         with self.assertRaises(ValueError) as error: mac._qualche_attributo_ = '0025.96FF.fe1a'
         self.assertEqual(str(error.exception), "cannot assign to field '_qualche_attributo_'")
+        with self.assertRaises(ValueError) as error: del mac._mac_address
+        self.assertEqual(str(error.exception), "cannot assign to field '_mac_address'")
 
 if __name__ == '__main__':
     unittest.main(verbosity=1)

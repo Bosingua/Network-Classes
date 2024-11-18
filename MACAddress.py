@@ -12,16 +12,16 @@ class MACAddress:
 
     def __init__(self, input: str) -> None: self._mac_address = input
 
-    def __setattr__(self, name: str, value) -> None:
+    def __setattr__(self, name: str, value: str) -> None:
         if hasattr(self, '_mac_address'): raise ValueError(f"cannot assign to field '{name}'")
         if not self._is_valid(value): raise ValueError('Invalid MAC address')
-        if isinstance(value, str): super().__setattr__(name, value.translate(str.maketrans('','',':-.')).lower())
+        super().__setattr__(name, value.translate(str.maketrans('','',':-.')).lower())
 
     def __delattr__(self, name): raise ValueError(f"cannot assign to field '{name}'")
 
-    def _format_mac_address(self, separator: str, upcase: bool, len: int = 2) -> str:
+    def _format_mac_address(self, separator: str, upcase: bool, len_block: int = 2) -> str:
         mac = self._mac_address.upper() if upcase else self._mac_address
-        return separator.join([mac[i:i+len] for i in range(0, 12, len)])
+        return separator.join([mac[i:i+len_block] for i in range(0, 12, len_block)])
 
     def in_Colon_separated_format(self, upcase: bool = True) -> str: return self._format_mac_address(":", upcase)
 
@@ -29,7 +29,7 @@ class MACAddress:
 
     def in_dot_separated_format(self, upcase: bool = False) -> str: return self._format_mac_address(".", upcase, 4)
 
-    def __add__(self): raise ValueError
+    def __add__(self): raise ValueError(f"unsupported operator for 'MACAddress'")
 
     __radd__ = __sub__ =__truediv__ = __div__ = __mod__ = __pow__ = __floordiv__ = __add__
     __rsub__ =__rtruediv__ = __rdiv__ = __rmod__ = __rpow__ = __rfloordiv__ = __add__
@@ -48,7 +48,7 @@ class MACAddress:
 
     @staticmethod
     def random_generator(input: str = ''):
-        if not isinstance(input, str): raise TypeError
+        if not isinstance(input, str): raise TypeError("Prefix must be a 'str' type")
         input = input.translate(str.maketrans('', '', ':-.')).lower()
-        if len(input) > 13 and not fullmatch(r'[\da-f]?', input): raise ValueError
+        if not fullmatch(r'[\da-f]{0,12}', input): raise ValueError('Not valid prefix')
         return MACAddress(f'{input}{''.join([format(randint(0, 15), 'x') for _ in range(12 - len(input))])}')

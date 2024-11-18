@@ -49,7 +49,11 @@ class testMAC(unittest.TestCase):
         random_mac = MACAddress.random_generator()
         self.assertEqual(random_mac._mac_address, MACAddress.random_generator(random_mac._mac_address)._mac_address)
         with self.assertRaises(TypeError) as error: MACAddress.random_generator([1,5])
+        self.assertEqual(str(error.exception), "Prefix must be a 'str' type")
         with self.assertRaises(ValueError) as error: MACAddress.random_generator('ged1695')
+        self.assertEqual(str(error.exception), 'Not valid prefix')
+        with self.assertRaises(ValueError) as error: MACAddress.random_generator('aaaaaaaaaaaaaaaaa15165bb')
+        self.assertEqual(str(error.exception), 'Not valid prefix')
 
     def test_immutable(self):
         mac = MACAddress('18-C0-4D-87-74-8F')

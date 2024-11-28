@@ -37,7 +37,10 @@ class MACAddress:
 
     def __eq__(self, other) -> bool:
         if isinstance(other, MACAddress): return self._mac_address == other._mac_address
-        if isinstance(other, str): return self._mac_address == other.translate(str.maketrans('','',':-.')).lower()
+        if isinstance(other, str):
+            pattern = r'[\da-f]{12}|[\da-f]{2}([:-][\da-f]{2}){5}|([\da-f]{4}\.){2}[\da-f]{4}'
+            if not fullmatch(pattern, other.lower()): return False
+            return self._mac_address == other.translate(str.maketrans('','',':-.')).lower()
         return False
 
     def __ne__(self, other) -> bool: return not self.__eq__(other)

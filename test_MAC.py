@@ -31,10 +31,10 @@ class testMAC(unittest.TestCase):
         self.assertEqual(MACAddress('18-C0-4D-87-74-8F') == MACAddress('18:C0:4D:87:74:8F'), True)
         self.assertEqual(MACAddress('18-C0-4D-87-74-8F') == '18:C0:4D:87:74:8F'            , True)
         self.assertEqual(            '18-C0-4D-87-74-8F' == MACAddress('18:C0:4D:87:74:8F'), True)
-        self.assertEqual(               '0025.96FF.fe1a' == MACAddress('18:C0:4D:87:74:8F'), False)
+        # self.assertEqual(               '0025.96FF.fe1a' == MACAddress('18:C0:4D:87:74:8F'), False)
         test_input = [' 00:25:96:FF:fe:1a', '96:FF:fe:1a:34:56 ', '00:2u:96:FF:FE:12', '00:25:96e:FF:FE:12',
         '00:25:96:F:FE:12', '00:25:96:FF:FE:112', '00', '00:25', '00:25:96', '00:25:96:FF', '00:25:96:FF:fe',
-        2, [6,'R'], ([51,'R'], 4, 'dede'),'002:5:96:FF:fe:1a']
+        2, [6,'R'], ([51,'R'], 4, 'dede'),'002:5:96:FF:fe:1a', '0025.96FF.fe1a', '18C:0:4D:87:74:8F']
         for input in test_input:
             self.assertEqual(input == MACAddress('18:C0:4D:87:74:8F'), False, f'input = {input}')
             self.assertEqual(MACAddress('18:C0:4D:87:74:8F') == input, False, f'input = {input}')

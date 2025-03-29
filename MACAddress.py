@@ -6,16 +6,19 @@ class MACAddress:
     def _is_valid(self, input) -> bool:
         if not isinstance(input, str): return False
         input = input.lower()
-        pattern = r'[\da-f]{12}|[\da-f]{2}([:-][\da-f]{2}){5}|([\da-f]{4}\.){2}[\da-f]{4}'
-        if not fullmatch(pattern, input): return False
-        return fullmatch(r'[\da-f]{12}', input.translate(str.maketrans('', '', ':-.')))
+        if not (fullmatch(r'[\da-f]{12}', input) or \
+                fullmatch(r'[\da-f]{2}([:-][\da-f]{2}){5}', input) or \
+                fullmatch(r'([\da-f]{4}\.){2}[\da-f]{4}', input) or \
+                fullmatch(r'[01]{48}', input)): return False
+        return fullmatch(r'[\da-f]{12}|[01]{48}', input.translate({58: '', 45: '', 46: ''}))
 
     def __init__(self, input: str) -> None: self._mac_address = input
 
     def __setattr__(self, name: str, value: str) -> None:
         if hasattr(self, '_mac_address'): raise ValueError(f"cannot assign to field '{name}'")
         if not self._is_valid(value): raise ValueError('Invalid MAC address')
-        super().__setattr__(name, value.translate(str.maketrans('','',':-.')).lower())
+        if fullmatch(r'[01]{48}', value): super().__setattr__(name, hex(int(value, 2))[2:])
+        else: super().__setattr__(name, value.translate({58: '', 45: '', 46: ''}).lower())
 
     def __delattr__(self, name): raise ValueError(f"cannot assign to field '{name}'")
 
@@ -29,7 +32,9 @@ class MACAddress:
 
     def in_dot_separated_format(self, upcase: bool = False) -> str: return self._format_mac_address(".", upcase, 4)
 
-    def __add__(self): raise ValueError(f"unsupported operator for 'MACAddress'")
+    def in_bin(self) -> str: return bin(int(self._mac_address, 16))[2:].zfill(48)
+
+    def __add__(self): raise ValueError("unsupported operator for 'MACAddress'")
 
     __radd__ = __sub__ =__truediv__ = __div__ = __mod__ = __pow__ = __floordiv__ = __add__
     __rsub__ =__rtruediv__ = __rdiv__ = __rmod__ = __rpow__ = __rfloordiv__ = __add__
@@ -37,10 +42,7 @@ class MACAddress:
 
     def __eq__(self, other) -> bool:
         if isinstance(other, MACAddress): return self._mac_address == other._mac_address
-        if isinstance(other, str):
-            pattern = r'[\da-f]{12}|[\da-f]{2}([:-][\da-f]{2}){5}|([\da-f]{4}\.){2}[\da-f]{4}'
-            if not fullmatch(pattern, other.lower()): return False
-            return self._mac_address == other.translate(str.maketrans('','',':-.')).lower()
+        if self._is_valid(other): return self._mac_address == other.translate({58: '', 45: '', 46: ''}).lower()
         return False
 
     def __ne__(self, other) -> bool: return not self.__eq__(other)
@@ -52,6 +54,6 @@ class MACAddress:
     @staticmethod
     def random_generator(input: str = ''):
         if not isinstance(input, str): raise TypeError("Prefix must be a 'str' type")
-        input = input.translate(str.maketrans('', '', ':-.')).lower()
+        input = input.translate({58: '', 45: '', 46: ''}).lower()
         if not fullmatch(r'[\da-f]{0,12}', input): raise ValueError('Not valid prefix')
         return MACAddress(f'{input}{''.join([format(randint(0, 15), 'x') for _ in range(12 - len(input))])}')

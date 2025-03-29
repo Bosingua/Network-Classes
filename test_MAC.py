@@ -8,6 +8,8 @@ class testMAC(unittest.TestCase):
         self.assertEqual(MACAddress('18-C0-4D-87-74-91')._mac_address, '18c04d877491')
         self.assertEqual(   MACAddress('18c0.4d87.7491')._mac_address, '18c04d877491')
         self.assertEqual(     MACAddress('002596FFfe1a')._mac_address, '002596fffe1a')
+        self.assertEqual(MACAddress('000110001100000001001101100001110111010010001111')._mac_address, '18c04d87748f')
+
         test_input = [' 00:25:96:FF:fe:1a', '96:FF:fe:1a:34:56 ', '00:2u:96:FF:FE:12', '00:25:96e:FF:FE:12',
         '00:25:96:F:FE:12', '00:25:96:FF:FE:112', '00', '00:25', '00:25:96', '00:25:96:FF', '00:25:96:FF:fe',
         2, [6,'R'], ([51,'R'], 4, 'dede'), '002:5:96:FF:fe:1a', '002.596FF.fe1a']
@@ -26,6 +28,11 @@ class testMAC(unittest.TestCase):
     def test_in_dot_separated_format(self):
         self.assertEqual(MACAddress('18:C0:4D:87:74:8F').in_dot_separated_format(True), '18C0.4D87.748F')
         self.assertEqual(MACAddress('18:C0:4D:87:74:8F').in_dot_separated_format()    , '18c0.4d87.748f')
+
+    def test_in_bin(self):
+        self.assertEqual(MACAddress('18:C0:4D:87:74:8F').in_bin(), '000110001100000001001101100001110111010010001111')
+        self.assertEqual(MACAddress('00:00:4D:87:74:8F').in_bin(), '000000000000000001001101100001110111010010001111')
+        # self.assertEqual(MACAddress('18:C0:4D:87:74:8F').in_bin()    , '18c0.4d87.748f')
 
     def test___eq__(self):
         self.assertEqual(MACAddress('18-C0-4D-87-74-8F') == MACAddress('18:C0:4D:87:74:8F'), True)
